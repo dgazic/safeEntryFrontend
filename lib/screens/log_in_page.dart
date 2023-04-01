@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
 import 'package:get/get.dart';
 import 'package:safe_entry/screens/registration_user_page.dart';
 import 'package:safe_entry/utils/color_utils.dart';
@@ -26,23 +27,23 @@ class _LogInPageState extends State<LogInPage> {
                 width: double.infinity,
                 decoration: BoxDecoration(gradient: ColorUtils.appBarGradient),
               ),
-              Align(
-                  alignment: Alignment.topCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 80),
-                    child: Text(
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
                       "Prijavi se",
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w800,
                           fontSize: 25),
                     ),
-                  )),
-              Center(
-                child: Container(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    child: LoginFormWidget()),
-              )
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child: LoginFormWidget())
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -80,6 +81,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
               children: <Widget>[
                 _buildEmailField(context),
                 _buildPasswordField(context),
+                SizedBox(height: 20),
                 _buildForgotPasswordWidget(context),
                 _buildSignUpButton(context),
               ],
@@ -91,9 +93,9 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
     );
   }
 
-  String? _userNameValidation(String value) {
+  String? _passwordInputValidation(String value) {
     if (value.isEmpty) {
-      return "Please enter valid user name";
+      return "Unesite lozinku";
     } else {
       return null;
     }
@@ -135,7 +137,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
         onFieldSubmitted: (_) {
           FocusScope.of(context).requestFocus(_emailFocusNode);
         },
-        validator: (value) => _userNameValidation(value!),
+        validator: (value) => _passwordInputValidation(value!),
         obscureText: _isPasswordVisible,
         decoration: InputDecoration(
           labelText: "Password",
@@ -171,13 +173,18 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
       padding: const EdgeInsets.only(top: 10.0, right: 10.0),
       child: Align(
         alignment: Alignment.centerRight,
-        child: ElevatedButton(
-            onPressed: () {},
-            child: Text(
-              'Zaboravljena lozinka?',
-              style:
-                  TextStyle(color: Colors.black54, fontWeight: FontWeight.w500),
-            )),
+        child: SizedBox(
+          width: 190,
+          height: 30,
+          child: ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+              onPressed: () {},
+              child: Text(
+                'Zaboravljena lozinka?',
+                style: TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.w500),
+              )),
+        ),
       ),
     );
   }
@@ -189,6 +196,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
         padding: EdgeInsets.symmetric(horizontal: 15.0),
         width: double.infinity,
         child: ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
           child: Text(
             "Prijava",
             style: TextStyle(

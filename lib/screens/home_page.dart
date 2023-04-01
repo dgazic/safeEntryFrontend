@@ -23,25 +23,19 @@ class _HomePageState extends State<HomePage> {
         ),
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center, // add Column
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               const Text('Safe Entry',
                   style: TextStyle(
-                      // your text
                       fontSize: 50.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white)),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
                 onPressed: () {
                   Get.to(LogInPage());
                 },
                 child: const Text('Log in'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Get.to(RegistrationUserPage());
-                },
-                child: const Text('Register'),
               ),
             ],
           ),
