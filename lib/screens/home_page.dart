@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:safe_entry/routes/routes_manager.dart';
 import 'package:safe_entry/screens/log_in_page.dart';
-import 'package:safe_entry/screens/registration_user_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
                 onPressed: () {
-                  Get.to(LogInPage());
+                  Get.toNamed(Routes.login);
                 },
                 child: const Text('Log in'),
               ),

@@ -1,8 +1,8 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-import 'package:safe_entry/screens/registration_user_page.dart';
+import 'package:provider/provider.dart';
+import 'package:safe_entry/providers/auth_provider.dart';
+import 'package:safe_entry/routes/routes_manager.dart';
 import 'package:safe_entry/utils/color_utils.dart';
 import 'package:safe_entry/utils/common_styles.dart';
 
@@ -38,6 +38,7 @@ class _LogInPageState extends State<LogInPage> {
                           fontWeight: FontWeight.w800,
                           fontSize: 25),
                     ),
+                    SizedBox(height: 30),
                     Container(
                         width: MediaQuery.of(context).size.width * 0.8,
                         child: LoginFormWidget())
@@ -87,7 +88,6 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
               ],
             ),
           ),
-          _buildSignUp(),
         ],
       ),
     );
@@ -178,7 +178,9 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
           height: 30,
           child: ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-              onPressed: () {},
+              onPressed: () {
+                Get.toNamed(Routes.organizerPage);
+              },
               child: Text(
                 'Zaboravljena lozinka?',
                 style: TextStyle(
@@ -189,7 +191,10 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
     );
   }
 
-  Widget _buildSignUpButton(BuildContext context) {
+  Widget _buildSignUpButton(
+    BuildContext context,
+  ) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
       child: Container(
@@ -197,11 +202,17 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
         width: double.infinity,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
-          child: Text(
-            "Prijava",
-            style: TextStyle(
-                color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
-          ),
+          child: authProvider.loading
+              ? CircularProgressIndicator(
+                  color: Colors.amber,
+                )
+              : Text(
+                  "Prijava",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600),
+                ),
           onPressed: () {
             _signUpProcess(context);
           },
@@ -211,49 +222,16 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
   }
 
   void _signUpProcess(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     var validate = _formKey.currentState?.validate();
 
     if (validate!) {
-      _clearAllFields();
-      //Do login stuff
+      authProvider.login(_userEmailController.text.toString(),
+          _userPasswordController.text.toString());
     } else {
       setState(() {
         _autoValidate = true;
       });
     }
-  }
-
-  void _clearAllFields() {
-    setState(() {
-      _userEmailController = TextEditingController(text: "");
-      _userPasswordController = TextEditingController(text: "");
-    });
-  }
-
-  Widget _buildSignUp() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 15),
-      child: RichText(
-        text: TextSpan(
-          style: DefaultTextStyle.of(context).style,
-          children: <TextSpan>[
-            const TextSpan(
-              text: "Nemaš račun? ",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-            ),
-            TextSpan(
-                text: 'Registriraj se',
-                style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    color: Colors.orange,
-                    fontSize: 14),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () {
-                    Get.to(RegistrationUserPage());
-                  }),
-          ],
-        ),
-      ),
-    );
   }
 }
