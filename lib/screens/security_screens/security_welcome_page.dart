@@ -1,5 +1,4 @@
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter/material.dart';
 
 class SecurityWelcomePage extends StatefulWidget {
   const SecurityWelcomePage({super.key});
@@ -11,6 +10,14 @@ class SecurityWelcomePage extends StatefulWidget {
 class _SecurityWelcomePageState extends State<SecurityWelcomePage> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      body: const Center(
+        child: Text(
+          'Welcome to security corp. administration',
+          style: TextStyle(fontSize: 24),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 }

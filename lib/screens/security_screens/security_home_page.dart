@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:get/get.dart';
+import 'package:safe_entry/routes/routes_manager.dart';
 import 'package:safe_entry/screens/security_screens/security_events_list_page.dart';
 import 'package:safe_entry/screens/security_screens/security_organizer_registration_page.dart';
 import 'package:safe_entry/screens/security_screens/security_organizers_list_page.dart';
-import 'package:safe_entry/screens/security_screens/security_scanner_page.dart';
 import 'package:safe_entry/screens/security_screens/security_welcome_page.dart';
 
 class SecurityHomePage extends StatefulWidget {
@@ -19,8 +18,7 @@ class _SecurityHomePageState extends State<SecurityHomePage> {
     SecurityWelcomePage(),
     SecurityEventsListPage(),
     SecurityOrganizerRegistrationPage(),
-    SecurityOrganizersListPage(),
-    SecurityScannerPage()
+    SecurityOrganizersListPage()
   ];
   int currentIndex = 0;
   void onTap(int index) {
@@ -34,6 +32,35 @@ class _SecurityHomePageState extends State<SecurityHomePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        title: Text("Security corp. administration"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: Text("Želite li se odjaviti?"),
+                        actions: <Widget>[
+                          new ElevatedButton.icon(
+                            label: Text("Da"),
+                            icon: Icon(Icons.logout),
+                            onPressed: () {
+                              Get.offAllNamed(Routes.home);
+                            },
+                          ),
+                          new ElevatedButton.icon(
+                            label: Text("Ne"),
+                            icon: Icon(Icons.block),
+                            onPressed: () {
+                              Get.back();
+                            },
+                          ),
+                        ],
+                      ));
+            },
+          ),
+        ],
       ),
       body: adminPages[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -49,10 +76,13 @@ class _SecurityHomePageState extends State<SecurityHomePage> {
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Početna"),
             BottomNavigationBarItem(
-                icon: Icon(Icons.insert_invitation),
-                label: "Pozivanje na event"),
+                icon: Icon(Icons.insert_invitation), label: "Lista evenata"),
             BottomNavigationBarItem(
-                icon: Icon(Icons.event_available), label: "Eventi"),
+                icon: Icon(Icons.app_registration),
+                label: "Registracija organizatora"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.corporate_fare_outlined),
+                label: "Lista organizatora"),
           ]),
     );
   }
