@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter/material.dart';
 
 class OrganizerWelcomePage extends StatefulWidget {
   const OrganizerWelcomePage({super.key});
@@ -12,6 +10,14 @@ class OrganizerWelcomePage extends StatefulWidget {
 class _OrganizerWelcomePageState extends State<OrganizerWelcomePage> {
   @override
   Widget build(BuildContext context) {
-    return Text("Dobrodošli");
+    return Scaffold(
+      body: const Center(
+        child: Text(
+          'Welcome to organization administration',
+          style: TextStyle(fontSize: 24),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 }

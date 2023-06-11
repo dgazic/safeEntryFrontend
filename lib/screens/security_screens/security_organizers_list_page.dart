@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
-import 'package:safe_entry/routes/routes_manager.dart';
 
 class SecurityOrganizersListPage extends StatefulWidget {
   const SecurityOrganizersListPage({super.key});
@@ -38,13 +35,98 @@ class _SecurityOrganizersListPageState
           itemCount: dataList.length,
           itemBuilder: (context, index) {
             return Card(
-              child: ListTile(
-                title: Text(dataList[index]),
-                subtitle: Text('Subtitle'),
-                trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  Get.toNamed(Routes.securityEventDetailsPage);
-                },
+              child: Padding(
+                padding: EdgeInsets.only(left: 6.0, right: 6.0, bottom: 6.0),
+                child: ExpansionTile(
+                  title: Text('Birth of Universe'),
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 6.0),
+                          child: Row(
+                            children: [
+                              Container(
+                                height: 35,
+                                width: 140,
+                                child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text("Opis organizatora"),
+                                              content: Container(
+                                                height: 200,
+                                                child: Column(
+                                                  children: [
+                                                    Text("Ime organizatora: "),
+                                                    SelectableText(
+                                                      "Privatna firma pula d.o.o",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    SizedBox(height: 8.0),
+                                                    Text(
+                                                        "Adresa organizatora: "),
+                                                    SelectableText(
+                                                      "Preradovićeva 28a",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    SizedBox(height: 8.0),
+                                                    Text(
+                                                        "Email adresa organizatora: "),
+                                                    SelectableText(
+                                                      "privatna.firma@gmail.com",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    SizedBox(height: 8.0),
+                                                    Text(
+                                                        "Broj telefona organizatora: "),
+                                                    SelectableText(
+                                                      "095/396-0923",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: [
+                                                ElevatedButton(
+                                                    onPressed: () {
+                                                      Get.back();
+                                                    },
+                                                    child: Text("Zatvori"))
+                                              ],
+                                            );
+                                          });
+                                    },
+                                    icon: Icon(Icons.account_box),
+                                    label: Text("Opis")),
+                              ),
+                              SizedBox(width: 8),
+                              Container(
+                                height: 35,
+                                width: 140,
+                                child: ElevatedButton.icon(
+                                    onPressed: () {},
+                                    icon: Icon(Icons.disabled_by_default),
+                                    label: Text("Deaktiviraj")),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             );
           }),

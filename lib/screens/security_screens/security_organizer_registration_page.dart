@@ -11,23 +11,25 @@ class SecurityOrganizerRegistrationPage extends StatefulWidget {
 class _SecurityOrganizerRegistrationPageState
     extends State<SecurityOrganizerRegistrationPage> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _companyNameController;
-  late TextEditingController _companyEmailController;
-  late TextEditingController _companyAddressController;
+  late TextEditingController _oranizerNameController;
+  late TextEditingController _organizerEmailController;
+  late TextEditingController _organizerAddressController;
+  late TextEditingController _organizerMobileNumberController;
 
   @override
   void initState() {
     super.initState();
-    _companyNameController = TextEditingController();
-    _companyEmailController = TextEditingController();
-    _companyAddressController = TextEditingController();
+    _oranizerNameController = TextEditingController();
+    _organizerEmailController = TextEditingController();
+    _organizerAddressController = TextEditingController();
+    _organizerMobileNumberController = TextEditingController();
   }
 
   @override
   void dispose() {
-    _companyNameController.dispose();
-    _companyEmailController.dispose();
-    _companyAddressController.dispose();
+    _oranizerNameController.dispose();
+    _organizerEmailController.dispose();
+    _organizerAddressController.dispose();
     super.dispose();
   }
 
@@ -46,7 +48,7 @@ class _SecurityOrganizerRegistrationPageState
             child: Column(
               children: [
                 CupertinoTextFormFieldRow(
-                  controller: _companyNameController,
+                  controller: _oranizerNameController,
                   placeholder: 'Ime organizatora',
                   keyboardType: TextInputType.text,
                   decoration: BoxDecoration(
@@ -66,7 +68,7 @@ class _SecurityOrganizerRegistrationPageState
                 ),
                 SizedBox(height: 16.0),
                 CupertinoTextFormFieldRow(
-                  controller: _companyEmailController,
+                  controller: _organizerEmailController,
                   placeholder: 'Email adresa organizatora',
                   keyboardType: TextInputType.emailAddress,
                   decoration: BoxDecoration(
@@ -87,8 +89,28 @@ class _SecurityOrganizerRegistrationPageState
                 ),
                 SizedBox(height: 16.0),
                 CupertinoTextFormFieldRow(
-                  controller: _companyAddressController,
+                  controller: _organizerAddressController,
                   placeholder: 'Adresa organizatora',
+                  keyboardType: TextInputType.text,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: CupertinoColors.black,
+                      width: 0.5,
+                    ),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  padding: EdgeInsets.all(12.0),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Unesite adresu organizatora';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16.0),
+                CupertinoTextFormFieldRow(
+                  controller: _organizerMobileNumberController,
+                  placeholder: 'Broj telefona organizatora',
                   keyboardType: TextInputType.text,
                   decoration: BoxDecoration(
                     border: Border.all(
@@ -110,10 +132,11 @@ class _SecurityOrganizerRegistrationPageState
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       // Retrieve the values from the TextEditingController
-                      final companyName = _companyNameController.text;
-                      final companyEmail = _companyEmailController.text;
-                      final companyAddress = _companyAddressController.text;
-
+                      final organizerName = _oranizerNameController.text;
+                      final organizerEmail = _organizerEmailController.text;
+                      final organizerAddress = _organizerAddressController.text;
+                      final organizerMobileNumber =
+                          _organizerMobileNumberController.text;
                       // Process the registration data
                       // For example, send the data to an API or save it locally
                       // using companyName, companyEmail, and companyAddress variables
