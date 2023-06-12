@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:safe_entry/models/login_model.dart';
 import 'package:safe_entry/providers/auth_provider.dart';
 import 'package:safe_entry/routes/routes_manager.dart';
 import 'package:safe_entry/utils/color_utils.dart';
@@ -68,6 +69,15 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
   var _passwordFocusNode = FocusNode();
   bool _isPasswordVisible = true;
   bool _autoValidate = false;
+  late LoginRequestModel requestModel;
+  late LoginResponseModel responseModel;
+
+  @override
+  void initState() {
+    super.initState();
+    requestModel = LoginRequestModel();
+    responseModel = LoginResponseModel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,6 +119,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
         keyboardType: TextInputType.emailAddress,
         textInputAction: TextInputAction.next,
         onFieldSubmitted: (_) {
+          requestModel.username = _userEmailController.text;
           FocusScope.of(context).requestFocus(_passwordFocusNode);
         },
         validator: (value) => _emailValidation(value!),
@@ -135,6 +146,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
         keyboardType: TextInputType.text,
         textInputAction: TextInputAction.next,
         onFieldSubmitted: (_) {
+          requestModel.password = _userPasswordController.text;
           FocusScope.of(context).requestFocus(_emailFocusNode);
         },
         validator: (value) => _passwordInputValidation(value!),
@@ -224,10 +236,11 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
   void _signUpProcess(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     var validate = _formKey.currentState?.validate();
+    requestModel.username = _userEmailController.text;
+    requestModel.password = _userPasswordController.text;
 
     if (validate!) {
-      authProvider.login(_userEmailController.text.toString(),
-          _userPasswordController.text.toString());
+      authProvider.login(requestModel);
     } else {
       setState(() {
         _autoValidate = true;

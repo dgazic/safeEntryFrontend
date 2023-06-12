@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:safe_entry/constants.dart';
+import 'package:safe_entry/models/login_model.dart';
+import 'package:safe_entry/resources/EnumApiRequests.dart';
+import 'package:safe_entry/services/API_Client.dart';
+
+final urlApi = url;
 
 class AuthProvider with ChangeNotifier {
+  APIClient _apiClient = APIClient();
   bool _loading = false;
   bool get loading => _loading;
 
@@ -10,22 +16,21 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void login(String email, String password) async {
+  Future<LoginResponseModel> login(LoginRequestModel requestModel) async {
     try {
       setLoading(true);
-      Response response = await post(Uri.parse('https://reqres.in/api/login'),
-          body: {'email': email, 'password': password});
+      String url = urlApi + '/auth/login/';
+      var response =
+          await _apiClient.request(API_REQUEST.POST, url, requestModel);
 
-      if (response.statusCode == 200) {
-        setLoading(false);
-        print('succesfully');
-      } else {
-        setLoading(false);
-        print('failed');
-      }
+      var responseData = LoginResponseModel.fromJson(response);
+      // token = responseData.token;
+      // AppPreferences.storeToken(token!);
+      return responseData;
     } catch (e) {
+      print(e);
       setLoading(false);
-      print(e.toString());
+      return LoginResponseModel();
     }
   }
 }
