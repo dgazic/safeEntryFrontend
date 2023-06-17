@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:safe_entry/models/user_model.dart';
-import 'package:safe_entry/providers/user_provide.dart';
+import 'package:safe_entry/providers/user_provider.dart';
 
 class AdministratorSecurityCorpListPage extends StatefulWidget {
   const AdministratorSecurityCorpListPage({super.key});

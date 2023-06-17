@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:safe_entry/models/event_model.dart';
+import 'package:safe_entry/providers/event_provider.dart';
 import 'package:safe_entry/routes/routes_manager.dart';
 
 class OrganizerEventsListPage extends StatefulWidget {
@@ -11,20 +13,15 @@ class OrganizerEventsListPage extends StatefulWidget {
       _OrganizerEventsListPageState();
 }
 
-final List<String> dataList = [
-  'Card 1',
-  'Card 2',
-  'Card 3',
-  'Card 4',
-  'Card 5',
-  'Card 6',
-  'Card 7',
-  'Card 8',
-  'Card 9',
-  'Card 10',
-];
-
 class _OrganizerEventsListPageState extends State<OrganizerEventsListPage> {
+  EventProvider eventProvider = EventProvider();
+  late Future<List<EventResponseModel>> eventsFuture;
+  void initState() {
+    super.initState();
+    var fetchEvents = eventProvider.fetchEvents();
+    eventsFuture = fetchEvents;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,20 +30,33 @@ class _OrganizerEventsListPageState extends State<OrganizerEventsListPage> {
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
       ),
-      body: ListView.builder(
-          itemCount: dataList.length,
-          itemBuilder: (context, index) {
-            return Card(
-              child: ListTile(
-                title: Text(dataList[index]),
-                subtitle: Text('Subtitle'),
-                trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  Get.toNamed(Routes.organizerEventDetailsPage);
-                },
-              ),
-            );
-          }),
+      body: FutureBuilder(
+        future: eventsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            var events = snapshot.data!;
+            return ListView.builder(
+                itemCount: events.length,
+                itemBuilder: (context, index) {
+                  final event = events[index];
+                  return Card(
+                    child: ListTile(
+                      title: Text(event.Name!),
+                      subtitle: Row(
+                        children: [Text('Adresa: '), Text(event.Address!)],
+                      ),
+                      trailing: Icon(Icons.arrow_forward),
+                      onTap: () {
+                        Get.toNamed(Routes.organizerEventDetailsPage);
+                      },
+                    ),
+                  );
+                });
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 }

@@ -35,7 +35,7 @@ class _SecurityOrganizerRegistrationPageState
     _ownerFirstNameController = TextEditingController();
     _ownerLastNameController = TextEditingController();
     _companyMobileController = TextEditingController();
-    requestModel = RegisterRequestModel(userRole: 1);
+    requestModel = RegisterRequestModel(userRole: 2);
     responseModel = RegisterResponseModel();
   }
 

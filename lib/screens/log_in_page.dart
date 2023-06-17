@@ -194,7 +194,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
           child: ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
               onPressed: () {
-                Get.toNamed(Routes.organizerPage);
+                Get.toNamed(Routes.securityPage);
               },
               child: Text(
                 'Zaboravljena lozinka?',

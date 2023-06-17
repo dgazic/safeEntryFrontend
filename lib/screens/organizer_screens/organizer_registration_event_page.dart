@@ -1,6 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import 'package:safe_entry/models/event_model.dart';
+import 'package:safe_entry/providers/event_provider.dart';
+import 'package:safe_entry/services/jwt_decoder.dart';
+import 'package:safe_entry/widgets/appMessages.dart';
 import 'package:safe_entry/widgets/datetime_picker.dart';
 
 class OrganizerRegistrationEventPage extends StatefulWidget {
@@ -14,6 +19,9 @@ class OrganizerRegistrationEventPage extends StatefulWidget {
 class _OrganizerRegistrationEventPageState
     extends State<OrganizerRegistrationEventPage> {
   final _formKey = GlobalKey<FormState>();
+  AppMessages appMessages = AppMessages();
+  late EventRegistrationRequestModel eventRegistrationRequestModel;
+  late EventRegistrationResponseModel eventRegistrationResponseModel;
   late TextEditingController _eventNameController;
   late TextEditingController _eventAddressController;
   late TextEditingController _eventDateAndTimeController;
@@ -26,6 +34,8 @@ class _OrganizerRegistrationEventPageState
     _eventAddressController = TextEditingController();
     _eventDateAndTimeController = TextEditingController();
     _eventDescriptionController = TextEditingController();
+    eventRegistrationRequestModel = EventRegistrationRequestModel();
+    eventRegistrationResponseModel = EventRegistrationResponseModel();
   }
 
   @override
@@ -86,7 +96,6 @@ class _OrganizerRegistrationEventPageState
                     if (value!.isEmpty) {
                       return 'Unesite adresu eventa';
                     }
-                    // Add email validation logic if needed
                     return null;
                   },
                 ),
@@ -155,15 +164,7 @@ class _OrganizerRegistrationEventPageState
                 CupertinoButton.filled(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // Retrieve the values from the TextEditingController
-                      // final organizerName = _oranizerNameController.text;
-                      // final organizerEmail = _organizerEmailController.text;
-                      // final organizerAddress = _organizerAddressController.text;
-                      // final organizerMobileNumber =
-                      //     _organizerMobileNumberController.text;
-                      // Process the registration data
-                      // For example, send the data to an API or save it locally
-                      // using companyName, companyEmail, and companyAddress variables
+                      _signUpProcess(context);
                     }
                   },
                   child: Text('Registriraj event'),
@@ -174,5 +175,34 @@ class _OrganizerRegistrationEventPageState
         ),
       ),
     );
+  }
+
+  void _signUpProcess(BuildContext context) async {
+    final eventProvider = Provider.of<EventProvider>(context, listen: false);
+    final String userOrganizerId = jwtDecoder().getToken()['UserId'];
+    var validate = _formKey.currentState?.validate();
+    eventRegistrationRequestModel.eventName = _eventNameController.text;
+    eventRegistrationRequestModel.eventAddress = _eventAddressController.text;
+    eventRegistrationRequestModel.eventDescription =
+        _eventDescriptionController.text;
+    eventRegistrationRequestModel.eventStarts =
+        _eventDateAndTimeController.text;
+    eventRegistrationRequestModel.eventOrganizerId = int.parse(userOrganizerId);
+
+    if (validate!) {
+      var dataProvider =
+          await eventProvider.EventRegistration(eventRegistrationRequestModel);
+      if (dataProvider.success == true) {
+        _eventNameController.clear();
+        _eventAddressController.clear();
+        _eventDescriptionController.clear();
+        _eventDateAndTimeController.clear();
+
+        appMessages.showInformationMessage(context, 1, "Uspiješno dodan event");
+      } else {
+        appMessages.showInformationMessage(
+            context, 2, "Neuspješno dodan event");
+      }
+    }
   }
 }
