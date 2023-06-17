@@ -22,8 +22,8 @@ class APIClient with ChangeNotifier {
         options: Options(
           method: method,
           headers: {
-            HttpHeaders.contentTypeHeader: "application/json",
-            // 'Authorization': 'Bearer $token'
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
           },
         ),
       );
@@ -37,5 +37,14 @@ class APIClient with ChangeNotifier {
     } catch (e) {
       throw Exception('Request failed: ${e.toString()}');
     }
+  }
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }

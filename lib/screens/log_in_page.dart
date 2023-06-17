@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_entry/models/login_model.dart';
 import 'package:safe_entry/providers/auth_provider.dart';
+import 'package:safe_entry/resources/EnumUserRoles.dart';
 import 'package:safe_entry/routes/routes_manager.dart';
 import 'package:safe_entry/utils/color_utils.dart';
 import 'package:safe_entry/utils/common_styles.dart';
+import 'package:safe_entry/widgets/appMessages.dart';
 
 class LogInPage extends StatefulWidget {
   @override
@@ -119,7 +122,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
         keyboardType: TextInputType.emailAddress,
         textInputAction: TextInputAction.next,
         onFieldSubmitted: (_) {
-          requestModel.username = _userEmailController.text;
+          requestModel.email = _userEmailController.text;
           FocusScope.of(context).requestFocus(_passwordFocusNode);
         },
         validator: (value) => _emailValidation(value!),
@@ -233,14 +236,35 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
     );
   }
 
-  void _signUpProcess(BuildContext context) {
+  void _signUpProcess(BuildContext context) async {
+    AppMessages appMessages = AppMessages();
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     var validate = _formKey.currentState?.validate();
-    requestModel.username = _userEmailController.text;
+    requestModel.email = _userEmailController.text;
     requestModel.password = _userPasswordController.text;
 
     if (validate!) {
-      authProvider.login(requestModel);
+      var dataProvider = await authProvider.login(requestModel);
+      if (dataProvider.success == true && dataProvider.token != "") {
+        authProvider.setLoading(false);
+        Map<String, dynamic> decodedToken =
+            Jwt.parseJwt(dataProvider.token.toString());
+
+        if (decodedToken["UserRoleId"] == EnumUserRole.Administrator) {
+          Get.offAllNamed(Routes.administratorPage);
+        }
+        if (decodedToken["UserRoleId"] == EnumUserRole.SecurityCompany) {
+          Get.offAllNamed(Routes.securityPage);
+        }
+        if (decodedToken["UserRoleId"] == EnumUserRole.OrganizerCompany) {
+          Get.offAllNamed(Routes.organizerPage);
+        }
+      } else {
+        appMessages.showInformationMessage(
+            context, 2, "Pogrešno korisničko ime ili lozinka");
+        _userPasswordController.clear();
+        authProvider.setLoading(false);
+      }
     } else {
       setState(() {
         _autoValidate = true;

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 class AdministratorWelcomePage extends StatefulWidget {
   const AdministratorWelcomePage({super.key});
@@ -13,6 +11,14 @@ class AdministratorWelcomePage extends StatefulWidget {
 class _AdministratorWelcomePageState extends State<AdministratorWelcomePage> {
   @override
   Widget build(BuildContext context) {
-    return Text("Dobrodošao!");
+    return Scaffold(
+      body: const Center(
+        child: Text(
+          'Welcome to Administration',
+          style: TextStyle(fontSize: 24),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 }

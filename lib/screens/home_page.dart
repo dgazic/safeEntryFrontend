@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:safe_entry/routes/routes_manager.dart';
-import 'package:safe_entry/screens/log_in_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

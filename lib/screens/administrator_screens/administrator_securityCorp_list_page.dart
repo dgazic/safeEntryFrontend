@@ -3,18 +3,18 @@ import 'package:get/get.dart';
 import 'package:safe_entry/models/user_model.dart';
 import 'package:safe_entry/providers/user_provide.dart';
 
-class SecurityOrganizersListPage extends StatefulWidget {
-  const SecurityOrganizersListPage({super.key});
+class AdministratorSecurityCorpListPage extends StatefulWidget {
+  const AdministratorSecurityCorpListPage({super.key});
 
   @override
-  State<SecurityOrganizersListPage> createState() =>
-      _SecurityOrganizersListPageState();
+  State<AdministratorSecurityCorpListPage> createState() =>
+      _AdministratorSecurityCorpListPageState();
 }
 
-class _SecurityOrganizersListPageState
-    extends State<SecurityOrganizersListPage> {
-  late Future<List<UserResponseModel>> usersFuture;
+class _AdministratorSecurityCorpListPageState
+    extends State<AdministratorSecurityCorpListPage> {
   UserProvider userProvider = UserProvider();
+  late Future<List<UserResponseModel>> usersFuture;
   void initState() {
     super.initState();
     var fetchUsers = userProvider.fetchUsers();
