@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:safe_entry/models/event_invitation_model.dart';
 import 'package:safe_entry/providers/event_provider.dart';
+import 'package:safe_entry/widgets/appMessages.dart';
 
 class OrganizerEventDetailsPage extends StatefulWidget {
   const OrganizerEventDetailsPage({super.key});
@@ -24,15 +26,22 @@ class _OrganizerEventDetailsPageState extends State<OrganizerEventDetailsPage> {
       peopleInvitedCount = value.PeopleInvited;
       setState(() {});
     });
+    dateTime = DateTime.parse(data['eventStarts']);
+    formattedDate = DateFormat('dd.MM.yyyy HH:mm').format(dateTime!);
     eventInvitationFuture = fetchInvitedPeople;
   }
 
   var data;
   int? peopleInvitedCount;
+  bool? activated;
+  DateTime? dateTime;
+  String? formattedDate;
 
   EventProvider eventProvider = EventProvider();
   EventInvitationResponseModel eventInvitationResponseModel =
       EventInvitationResponseModel();
+
+  AppMessages appMessages = AppMessages();
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +49,7 @@ class _OrganizerEventDetailsPageState extends State<OrganizerEventDetailsPage> {
       child: Container(
         child: LinearProgressIndicator(
             backgroundColor: Color.fromRGBO(209, 224, 224, 0.2),
-            value: 0.2, //lesson.indicatorValue,
+            value: 0.2,
             valueColor: AlwaysStoppedAnimation(Colors.green)),
       ),
     );
@@ -86,7 +95,7 @@ class _OrganizerEventDetailsPageState extends State<OrganizerEventDetailsPage> {
               border: new Border.all(color: Colors.white),
               borderRadius: BorderRadius.circular(5.0)),
           child: new Text(
-            data['eventStarts'],
+            formattedDate!,
             style: TextStyle(color: Colors.white),
           ),
         ),
@@ -122,13 +131,11 @@ class _OrganizerEventDetailsPageState extends State<OrganizerEventDetailsPage> {
                 child: Padding(
                     padding: EdgeInsets.only(left: 10.0),
                     child: Text(
-                      // lesson.level,
                       "Broj pozvanih: ",
                       style: TextStyle(color: Colors.white),
                     ))),
             Expanded(
                 child: Text(
-              // lesson.level,
               (peopleInvitedCount != null)
                   ? peopleInvitedCount.toString()
                   : "-",
@@ -148,12 +155,7 @@ class _OrganizerEventDetailsPageState extends State<OrganizerEventDetailsPage> {
         Container(
             padding: EdgeInsets.only(left: 10.0),
             height: MediaQuery.of(context).size.height * 0.5,
-            decoration: new BoxDecoration(
-                // image: new DecorationImage(
-                // image: new AssetImage("drive-steering-wheel.jpg"),
-                // fit: BoxFit.cover,
-                // ),
-                )),
+            decoration: new BoxDecoration()),
         Container(
           height: MediaQuery.of(context).size.height * 0.5,
           padding: EdgeInsets.all(40.0),
@@ -200,54 +202,138 @@ class _OrganizerEventDetailsPageState extends State<OrganizerEventDetailsPage> {
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text("Pregled pozvanih gosti"),
-                  content: Container(
-                    height: MediaQuery.of(context).size.height,
-                    width: 10,
-                    child: FutureBuilder(
-                      future: eventInvitationFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          var invitedPeoples = snapshot.data!;
-                          if (invitedPeoples.length != 0) {
-                            return ListView.builder(
-                              itemCount: invitedPeoples.length,
-                              itemBuilder: (context, index) {
-                                final invitedPeople = invitedPeoples[index];
-                                return ListTile(
-                                  title: Row(
-                                    children: [
-                                      Text(invitedPeople.firstName!),
-                                      SizedBox(width: 3),
-                                      Text(invitedPeople.lastName!),
-                                    ],
-                                  ),
-                                  trailing: Icon(Icons.check),
-                                  onTap: () {
-                                    // Handle item selection
-                                    // You can update the selected date or perform any other actions
-                                  },
-                                );
+                return ScaffoldMessenger(
+                  child: Builder(
+                    builder: (context) {
+                      return Scaffold(
+                        backgroundColor: Colors.transparent,
+                        body: AlertDialog(
+                          title: Text("Pregled pozvanih gosti"),
+                          content: Container(
+                            height: MediaQuery.of(context).size.height * 0.2,
+                            width: 10,
+                            child: FutureBuilder(
+                              future: eventInvitationFuture,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  var invitedPeoples = snapshot.data!;
+                                  if (invitedPeoples.length != 0) {
+                                    return Container(
+                                      height: 300,
+                                      width: 300,
+                                      child: ListView.builder(
+                                        itemCount: invitedPeoples.length,
+                                        itemBuilder: (context, index) {
+                                          final invitedPeople =
+                                              invitedPeoples[index];
+                                          activated = invitedPeople.active!;
+
+                                          return StatefulBuilder(
+                                              builder:
+                                                  (context, _setter) =>
+                                                      Container(
+                                                        height: 300,
+                                                        width: 300,
+                                                        child: ListTile(
+                                                          title: Row(
+                                                            children: [
+                                                              Text(invitedPeople
+                                                                  .firstName!),
+                                                              SizedBox(
+                                                                  width: 3),
+                                                              Text(invitedPeople
+                                                                  .lastName!),
+                                                            ],
+                                                          ),
+                                                          trailing: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: <Widget>[
+                                                              IconButton(
+                                                                icon:
+                                                                    (activated ==
+                                                                            false)
+                                                                        ? Icon(
+                                                                            Icons.check,
+                                                                            size:
+                                                                                20.0,
+                                                                            color:
+                                                                                Colors.brown[900],
+                                                                          )
+                                                                        : Icon(
+                                                                            Icons.cancel,
+                                                                            size:
+                                                                                20.0,
+                                                                            color:
+                                                                                Colors.brown[900],
+                                                                          ),
+                                                                onPressed:
+                                                                    () async {
+                                                                  var dataProvider =
+                                                                      await eventProvider.EnableDisableInvitation(
+                                                                          invitedPeople
+                                                                              .id!);
+                                                                  if (activated ==
+                                                                      true)
+                                                                    activated =
+                                                                        false;
+                                                                  else
+                                                                    activated =
+                                                                        true;
+                                                                  _setter(
+                                                                      () {});
+                                                                  setState(
+                                                                      () {});
+                                                                  if (dataProvider
+                                                                      .success!) {
+                                                                    if (activated ==
+                                                                        true) {
+                                                                      appMessages.showInformationMessage(
+                                                                          context,
+                                                                          0,
+                                                                          "Uspješno aktivirana pozivnica");
+                                                                    }
+                                                                    if (activated ==
+                                                                        false) {
+                                                                      appMessages.showInformationMessage(
+                                                                          context,
+                                                                          0,
+                                                                          "Uspješno deaktivirana pozivnica");
+                                                                    }
+                                                                  }
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ));
+                                        },
+                                      ),
+                                    );
+                                  } else {
+                                    return Text("Nema pozvanih");
+                                  }
+                                } else {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                }
                               },
-                            );
-                          } else {
-                            return Text("Nema pozvanih");
-                          }
-                        } else {
-                          return Center(child: CircularProgressIndicator());
-                        }
-                      },
-                    ),
+                            ),
+                          ),
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Get.back();
+                              },
+                              child: Text("Zatvori"),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
-                  actions: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      child: Text("Zatvori"),
-                    ),
-                  ],
                 );
               },
             )

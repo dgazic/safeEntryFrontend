@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:safe_entry/models/user_model.dart';
 import 'package:safe_entry/providers/user_provider.dart';
+import 'package:safe_entry/widgets/appMessages.dart';
 
 class SecurityOrganizersListPage extends StatefulWidget {
   const SecurityOrganizersListPage({super.key});
@@ -20,6 +21,9 @@ class _SecurityOrganizersListPageState
     var fetchUsers = userProvider.fetchUsers();
     usersFuture = fetchUsers;
   }
+
+  AppMessages appMessages = AppMessages();
+  bool? activated = true;
 
   @override
   Widget build(BuildContext context) {
@@ -125,14 +129,41 @@ class _SecurityOrganizersListPageState
                                           label: Text("Opis")),
                                     ),
                                     SizedBox(width: 8),
-                                    Container(
-                                      height: 35,
-                                      width: 140,
-                                      child: ElevatedButton.icon(
-                                          onPressed: () {},
-                                          icon: Icon(Icons.disabled_by_default),
-                                          label: Text("Deaktiviraj")),
-                                    ),
+                                    (activated == true)
+                                        ? Container(
+                                            height: 35,
+                                            width: 140,
+                                            child: ElevatedButton.icon(
+                                                onPressed: () {
+                                                  activated = false;
+                                                  setState(() {});
+                                                  appMessages
+                                                      .showInformationMessage(
+                                                          context,
+                                                          0,
+                                                          "Račun organizatora deaktiviran");
+                                                },
+                                                icon: Icon(
+                                                    Icons.disabled_by_default),
+                                                label: Text("Deaktiviraj")),
+                                          )
+                                        : Container(
+                                            height: 35,
+                                            width: 140,
+                                            child: ElevatedButton.icon(
+                                                onPressed: () {
+                                                  activated = true;
+                                                  setState(() {});
+                                                  appMessages
+                                                      .showInformationMessage(
+                                                          context,
+                                                          0,
+                                                          "Račun organizatora aktiviran");
+                                                },
+                                                icon:
+                                                    Icon(Icons.local_activity),
+                                                label: Text("Aktiviraj")),
+                                          ),
                                   ],
                                 ),
                               ),

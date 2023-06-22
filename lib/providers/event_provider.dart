@@ -112,4 +112,19 @@ class EventProvider with ChangeNotifier {
       throw Exception('Fail to retrieve events');
     }
   }
+
+  Future<EventCheckInvitationResponseModel> EnableDisableInvitation(
+      int guestId) async {
+    try {
+      String url = urlApi + '/Event/EnableDisableInvitation/';
+      Map<String, dynamic>? qParam = {"guestId": guestId};
+      var response = await _apiClient.request(API_REQUEST.PUT, url, null,
+          queryParameters: qParam);
+      var responser = response;
+      var responseData = EventCheckInvitationResponseModel.fromJson(responser);
+      return responseData;
+    } catch (e) {
+      throw Exception('Fail to retrieve events');
+    }
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:safe_entry/models/event_check_invitation.dart';
 import 'package:safe_entry/providers/event_provider.dart';
@@ -22,15 +23,20 @@ class _SecurityEventDetailsPageState extends State<SecurityEventDetailsPage> {
       EventCheckInvitationRequestModel();
   EventCheckInvitationResponseModel eventCheckInvitationResponseModel =
       EventCheckInvitationResponseModel();
+  DateTime? dateTime;
+  String? formattedDate;
   @override
   void initState() {
     super.initState();
+
     data = Get.arguments;
     eventProvider.fetchEventById(data['eventId']).then((value) {
       peopleInvitedCount = value.PeopleInvited;
       setState(() {});
     });
     setState(() {});
+    dateTime = DateTime.parse(data['eventStarts']);
+    formattedDate = DateFormat('dd.MM.yyyy HH:mm').format(dateTime!);
   }
 
   Future<String> _scan() async {
@@ -90,7 +96,7 @@ class _SecurityEventDetailsPageState extends State<SecurityEventDetailsPage> {
               border: new Border.all(color: Colors.white),
               borderRadius: BorderRadius.circular(5.0)),
           child: new Text(
-            data['eventStarts'],
+            formattedDate!,
             style: TextStyle(color: Colors.white),
           ),
         ),
