@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:safe_entry/models/event_model.dart';
@@ -18,7 +17,7 @@ class _OrganizerEventsListPageState extends State<OrganizerEventsListPage> {
   late Future<List<EventResponseModel>> eventsFuture;
   void initState() {
     super.initState();
-    var fetchEvents = eventProvider.fetchEvents();
+    var fetchEvents = eventProvider.fetchEventsByOrganization();
     eventsFuture = fetchEvents;
   }
 
@@ -47,7 +46,15 @@ class _OrganizerEventsListPageState extends State<OrganizerEventsListPage> {
                       ),
                       trailing: Icon(Icons.arrow_forward),
                       onTap: () {
-                        Get.toNamed(Routes.organizerEventDetailsPage);
+                        Map<String, dynamic> parameters = {
+                          'eventId': event.Id,
+                          'eventName': event.Name,
+                          'eventAddress': event.Address,
+                          'eventDescription': event.Description,
+                          'eventStarts': event.EventStarts
+                        };
+                        Get.toNamed(Routes.organizerEventDetailsPage,
+                            arguments: parameters);
                       },
                     ),
                   );

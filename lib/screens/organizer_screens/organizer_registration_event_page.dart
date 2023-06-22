@@ -1,12 +1,12 @@
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_entry/models/event_model.dart';
 import 'package:safe_entry/providers/event_provider.dart';
 import 'package:safe_entry/services/jwt_decoder.dart';
 import 'package:safe_entry/widgets/appMessages.dart';
-import 'package:safe_entry/widgets/datetime_picker.dart';
 
 class OrganizerRegistrationEventPage extends StatefulWidget {
   const OrganizerRegistrationEventPage({super.key});
@@ -118,49 +118,79 @@ class _OrganizerRegistrationEventPageState
                     return null;
                   },
                 ),
-                SizedBox(height: 16.0),
-                Padding(
-                  padding: const EdgeInsets.only(left: 15.0),
-                  child: Row(
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: () => {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text("Vrijeme početka eventa"),
-                                  content: Container(
-                                    height: 200,
-                                    child: DatePickerExample(),
-                                  ),
-                                  actions: [
-                                    ElevatedButton(
-                                        onPressed: () {
-                                          Get.back();
-                                        },
-                                        child: Text("Zatvori"))
-                                  ],
-                                );
-                              })
-                        },
-                        label: Text("Odaberi vrijeme"),
-                        icon: Icon(Icons.timelapse),
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(child: Text("Vrijeme početka"))),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15.0),
+                      child: Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.grey, width: 1)),
+                            height: 50,
+                            width: 330,
+                            child: DateTimePicker(
+                              locale: Locale("hr"),
+                              type: DateTimePickerType.dateTimeSeparate,
+                              dateMask: 'd MMM, yyyy',
+                              initialValue: DateTime.now().toString(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                              icon: Icon(Icons.event),
+                              dateLabelText: 'Datum',
+                              timeLabelText: "Vrijeme",
+                              selectableDayPredicate: (date) {
+                                if (date.weekday == 6 || date.weekday == 7) {
+                                  return false;
+                                }
+
+                                return true;
+                              },
+                              onChanged: (val) {
+                                DateFormat formatter =
+                                    DateFormat("yyyy-MM-dd HH:mm");
+                                DateTime dateTime = DateTime.parse(val);
+                                String formattedString =
+                                    formatter.format(dateTime);
+                                _eventDateAndTimeController.text =
+                                    formattedString;
+                              },
+                              validator: (val) {
+                                DateFormat formatter =
+                                    DateFormat("yyyy-MM-dd HH:mm");
+                                DateTime dateTime = DateTime.parse(val!);
+                                String formattedString =
+                                    formatter.format(dateTime);
+                                _eventDateAndTimeController.text =
+                                    formattedString;
+                                return null;
+                              },
+                              onSaved: (val) {
+                                DateFormat formatter =
+                                    DateFormat("yyyy-MM-dd HH:mm");
+                                DateTime dateTime = DateTime.parse(val!);
+                                String formattedString =
+                                    formatter.format(dateTime);
+                                _eventDateAndTimeController.text =
+                                    formattedString;
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 10),
-                      Container(
-                        padding: const EdgeInsets.all(3.0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.orange)),
-                        child: Text(
-                          "22.06.2023 - 15:00",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      )
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 16.0),
+                SizedBox(
+                  height: 10,
+                ),
                 CupertinoButton.filled(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {

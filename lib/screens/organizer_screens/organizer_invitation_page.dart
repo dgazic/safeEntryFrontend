@@ -42,14 +42,11 @@ class _OrganizerInvitationSendPageState
     _guestLastNameController = TextEditingController();
     _guestEmailController = TextEditingController();
     _guestMobileNumberController = TextEditingController();
-    eventProvider.fetchEvents().then((value) {
+    eventProvider.fetchEventsByOrganization().then((value) {
       for (var v in value) {
         dropdownEventsItemSource.add(v.Name!);
         eventsIds.add(v.Id!);
-        print(dropdownEventsItemSource);
-        print(eventsIds);
         mappedData = Map.fromIterables(eventsIds, dropdownEventsItemSource);
-        print(mappedData);
       }
       setState(() {});
     });

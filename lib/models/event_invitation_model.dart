@@ -29,13 +29,19 @@ class EventInvitationRequestModel {
 }
 
 class EventInvitationResponseModel {
+  String? firstName;
+  String? lastName;
   final String? error;
   bool? success;
 
-  EventInvitationResponseModel({this.error, this.success});
+  EventInvitationResponseModel(
+      {this.firstName, this.lastName, this.error, this.success});
 
   factory EventInvitationResponseModel.fromJson(Map<String, dynamic> json) {
     return EventInvitationResponseModel(
-        error: json["error"], success: json["success"]);
+        firstName: json["firstName"],
+        lastName: json["lastName"],
+        error: json["error"],
+        success: json["success"]);
   }
 }

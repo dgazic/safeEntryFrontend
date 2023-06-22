@@ -48,7 +48,7 @@ class _SecurityOrganizerRegistrationPageState
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: Text('Registracija security tvrtke'),
+        middle: Text('Registracija organizatora'),
         automaticallyImplyLeading: false,
       ),
       child: SafeArea(

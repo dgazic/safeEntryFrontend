@@ -42,17 +42,20 @@ class EventResponseModel {
   String? Name;
   String? Description;
   String? Address;
-  String? Starts;
+  String? EventStarts;
   int? eventOrganizerId;
+  String? companyName;
+  int? PeopleInvited;
 
-  EventResponseModel({
-    this.Id,
-    this.Name,
-    this.Description,
-    this.Address,
-    this.Starts,
-    this.eventOrganizerId,
-  });
+  EventResponseModel(
+      {this.Id,
+      this.Name,
+      this.Description,
+      this.Address,
+      this.EventStarts,
+      this.eventOrganizerId,
+      this.PeopleInvited,
+      this.companyName});
 
   factory EventResponseModel.fromJson(Map<String, dynamic> json) {
     return EventResponseModel(
@@ -60,6 +63,8 @@ class EventResponseModel {
         Name: json["name"],
         Description: json["description"],
         Address: json["address"],
-        Starts: json["starts"]);
+        EventStarts: json["eventStarts"],
+        PeopleInvited: json["peopleInvited"],
+        companyName: json["companyName"]);
   }
 }

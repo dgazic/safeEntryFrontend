@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:get/get.dart';
+import 'package:quickalert/quickalert.dart';
+import 'package:safe_entry/models/event_check_invitation.dart';
+import 'package:safe_entry/providers/event_provider.dart';
 
 class SecurityEventDetailsPage extends StatefulWidget {
   const SecurityEventDetailsPage({super.key});
@@ -10,7 +14,25 @@ class SecurityEventDetailsPage extends StatefulWidget {
 }
 
 class _SecurityEventDetailsPageState extends State<SecurityEventDetailsPage> {
+  var data;
   String? _data;
+  int? peopleInvitedCount;
+  EventProvider eventProvider = EventProvider();
+  EventCheckInvitationRequestModel eventCheckInvitationRequestModel =
+      EventCheckInvitationRequestModel();
+  EventCheckInvitationResponseModel eventCheckInvitationResponseModel =
+      EventCheckInvitationResponseModel();
+  @override
+  void initState() {
+    super.initState();
+    data = Get.arguments;
+    eventProvider.fetchEventById(data['eventId']).then((value) {
+      peopleInvitedCount = value.PeopleInvited;
+      setState(() {});
+    });
+    setState(() {});
+  }
+
   Future<String> _scan() async {
     return await FlutterBarcodeScanner.scanBarcode(
         "#000000", "Odustani", false, ScanMode.QR);
@@ -27,22 +49,58 @@ class _SecurityEventDetailsPageState extends State<SecurityEventDetailsPage> {
       ),
     );
 
-    final coursePrice = Container(
-      padding: const EdgeInsets.all(7.0),
-      decoration: new BoxDecoration(
-          border: new Border.all(color: Colors.white),
-          borderRadius: BorderRadius.circular(5.0)),
-      child: new Text(
-        // "\$" + lesson.price.toString(),
-        "Ul. Petra Preradovića 28a",
-        style: TextStyle(color: Colors.white),
-      ),
+    final coursePrice = Column(
+      children: [
+        Container(
+          child: new Text(
+            "Adresa: ",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Container(
+          padding: const EdgeInsets.all(7.0),
+          decoration: new BoxDecoration(
+              border: new Border.all(color: Colors.white),
+              borderRadius: BorderRadius.circular(5.0)),
+          child: Column(
+            children: [
+              new Text(
+                data['eventAddress'],
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 20),
+        Container(
+          child: new Text(
+            "Vrijeme početka: ",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Container(
+          padding: const EdgeInsets.all(7.0),
+          decoration: new BoxDecoration(
+              border: new Border.all(color: Colors.white),
+              borderRadius: BorderRadius.circular(5.0)),
+          child: new Text(
+            data['eventStarts'],
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ],
     );
 
     final topContentText = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        SizedBox(height: 120.0),
+        SizedBox(height: 70.0),
         Icon(
           Icons.event,
           color: Colors.white,
@@ -55,9 +113,25 @@ class _SecurityEventDetailsPageState extends State<SecurityEventDetailsPage> {
         SizedBox(height: 10.0),
         Expanded(
           child: Text(
-            // lesson.title,
-            "Privatna zabava - Pula",
+            data['eventName'],
             style: TextStyle(color: Colors.white, fontSize: 28.0),
+          ),
+        ),
+        Expanded(
+          child: Row(
+            children: [
+              Text(
+                "Organizator:",
+                style: TextStyle(color: Colors.white, fontSize: 20.0),
+              ),
+              SizedBox(
+                width: 8,
+              ),
+              Text(
+                data['companyName'],
+                style: TextStyle(color: Colors.white, fontSize: 20.0),
+              ),
+            ],
           ),
         ),
         Row(
@@ -65,15 +139,26 @@ class _SecurityEventDetailsPageState extends State<SecurityEventDetailsPage> {
           children: <Widget>[
             Expanded(flex: 1, child: levelIndicator),
             Expanded(
-                flex: 5,
+                flex: 3,
                 child: Padding(
                     padding: EdgeInsets.only(left: 10.0),
                     child: Text(
                       // lesson.level,
-                      "1",
+                      "Broj pozvanih: ",
                       style: TextStyle(color: Colors.white),
                     ))),
-            Expanded(flex: 5, child: coursePrice)
+            Expanded(
+                child: Text(
+              // lesson.level,
+              (peopleInvitedCount != null)
+                  ? peopleInvitedCount.toString()
+                  : "-",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20),
+            )),
+            Expanded(flex: 5, child: coursePrice),
           ],
         ),
       ],
@@ -84,12 +169,7 @@ class _SecurityEventDetailsPageState extends State<SecurityEventDetailsPage> {
         Container(
             padding: EdgeInsets.only(left: 10.0),
             height: MediaQuery.of(context).size.height * 0.5,
-            decoration: new BoxDecoration(
-                // image: new DecorationImage(
-                // image: new AssetImage("drive-steering-wheel.jpg"),
-                // fit: BoxFit.cover,
-                // ),
-                )),
+            decoration: new BoxDecoration()),
         Container(
           height: MediaQuery.of(context).size.height * 0.5,
           padding: EdgeInsets.all(40.0),
@@ -112,10 +192,16 @@ class _SecurityEventDetailsPageState extends State<SecurityEventDetailsPage> {
       ],
     );
 
-    final bottomContentText = Text(
-      // lesson.content,
-      "Privatna zabava provjeravanje svake osobe",
-      style: TextStyle(fontSize: 18.0),
+    final bottomContentText = Row(
+      children: [
+        Flexible(
+          child: Text(
+            data['eventDescription'],
+            style: TextStyle(fontSize: 18.0),
+            overflow: TextOverflow.clip,
+          ),
+        ),
+      ],
     );
     final scannButton = Container(
         padding: EdgeInsets.symmetric(vertical: 16.0),
@@ -126,7 +212,37 @@ class _SecurityEventDetailsPageState extends State<SecurityEventDetailsPage> {
             "PROVJERI ULAZAK",
             style: TextStyle(color: Colors.white),
           ),
-          onPressed: () async => {_data = await _scan(), print(_data)},
+          onPressed: () async {
+            _data = await _scan();
+            eventCheckInvitationRequestModel.invitationCode = _data;
+            eventCheckInvitationRequestModel.eventId = data['eventId'];
+            var dataProvider = await eventProvider.CheckInvitationCode(
+                eventCheckInvitationRequestModel);
+            if (dataProvider.success == true) {
+              QuickAlert.show(
+                  context: context,
+                  type: QuickAlertType.success,
+                  title: 'OBAVIJEST',
+                  confirmBtnText: 'U redu',
+                  text: 'Dopušten ulaz, osoba ima validnu pozivnicu.');
+            } else if (_data == "-1") {
+              QuickAlert.show(
+                context: context,
+                type: QuickAlertType.warning,
+                confirmBtnText: 'U redu',
+                title: 'OBAVIJEST',
+                text: 'Prekinuli ste radnju skeniranja, pokušajte ponovno',
+              );
+            } else {
+              QuickAlert.show(
+                context: context,
+                type: QuickAlertType.error,
+                title: 'OBAVIJEST',
+                confirmBtnText: 'U redu',
+                text: 'Nije dopušten ulaz, osoba nema validnu pozivnicu.',
+              );
+            }
+          },
         ));
     final bottomContent = Container(
       width: MediaQuery.of(context).size.width,

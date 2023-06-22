@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:get/get.dart';
+import 'package:safe_entry/models/event_invitation_model.dart';
+import 'package:safe_entry/providers/event_provider.dart';
 
 class OrganizerEventDetailsPage extends StatefulWidget {
   const OrganizerEventDetailsPage({super.key});
@@ -11,18 +12,27 @@ class OrganizerEventDetailsPage extends StatefulWidget {
 }
 
 class _OrganizerEventDetailsPageState extends State<OrganizerEventDetailsPage> {
-  final List<String> dataList = [
-    'Card 1',
-    'Card 2',
-    'Card 3',
-    'Card 4',
-    'Card 5',
-    'Card 6',
-    'Card 7',
-    'Card 8',
-    'Card 9',
-    'Card 10',
-  ];
+  late Future<List<EventInvitationResponseModel>> eventInvitationFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    data = Get.arguments;
+    var fetchInvitedPeople =
+        eventProvider.GetInvitedPeopleEvent(data['eventId']);
+    eventProvider.fetchEventById(data['eventId']).then((value) {
+      peopleInvitedCount = value.PeopleInvited;
+      setState(() {});
+    });
+    eventInvitationFuture = fetchInvitedPeople;
+  }
+
+  var data;
+  int? peopleInvitedCount;
+
+  EventProvider eventProvider = EventProvider();
+  EventInvitationResponseModel eventInvitationResponseModel =
+      EventInvitationResponseModel();
 
   @override
   Widget build(BuildContext context) {
@@ -35,22 +45,58 @@ class _OrganizerEventDetailsPageState extends State<OrganizerEventDetailsPage> {
       ),
     );
 
-    final coursePrice = Container(
-      padding: const EdgeInsets.all(7.0),
-      decoration: new BoxDecoration(
-          border: new Border.all(color: Colors.white),
-          borderRadius: BorderRadius.circular(5.0)),
-      child: new Text(
-        // "\$" + lesson.price.toString(),
-        "Ul. Petra Preradovića 28a",
-        style: TextStyle(color: Colors.white),
-      ),
+    final coursePrice = Column(
+      children: [
+        Container(
+          child: new Text(
+            "Adresa: ",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Container(
+          padding: const EdgeInsets.all(7.0),
+          decoration: new BoxDecoration(
+              border: new Border.all(color: Colors.white),
+              borderRadius: BorderRadius.circular(5.0)),
+          child: Column(
+            children: [
+              new Text(
+                data['eventAddress'],
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 20),
+        Container(
+          child: new Text(
+            "Vrijeme početka: ",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Container(
+          padding: const EdgeInsets.all(7.0),
+          decoration: new BoxDecoration(
+              border: new Border.all(color: Colors.white),
+              borderRadius: BorderRadius.circular(5.0)),
+          child: new Text(
+            data['eventStarts'],
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ],
     );
 
     final topContentText = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        SizedBox(height: 120.0),
+        SizedBox(height: 70.0),
         Icon(
           Icons.event,
           color: Colors.white,
@@ -63,8 +109,7 @@ class _OrganizerEventDetailsPageState extends State<OrganizerEventDetailsPage> {
         SizedBox(height: 10.0),
         Expanded(
           child: Text(
-            // lesson.title,
-            "Privatna zabava - Pula",
+            data['eventName'],
             style: TextStyle(color: Colors.white, fontSize: 28.0),
           ),
         ),
@@ -73,15 +118,26 @@ class _OrganizerEventDetailsPageState extends State<OrganizerEventDetailsPage> {
           children: <Widget>[
             Expanded(flex: 1, child: levelIndicator),
             Expanded(
-                flex: 5,
+                flex: 3,
                 child: Padding(
                     padding: EdgeInsets.only(left: 10.0),
                     child: Text(
                       // lesson.level,
-                      "1",
+                      "Broj pozvanih: ",
                       style: TextStyle(color: Colors.white),
                     ))),
-            Expanded(flex: 5, child: coursePrice)
+            Expanded(
+                child: Text(
+              // lesson.level,
+              (peopleInvitedCount != null)
+                  ? peopleInvitedCount.toString()
+                  : "-",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20),
+            )),
+            Expanded(flex: 5, child: coursePrice),
           ],
         ),
       ],
@@ -122,13 +178,9 @@ class _OrganizerEventDetailsPageState extends State<OrganizerEventDetailsPage> {
 
     final bottomContentText = Row(
       children: [
-        ElevatedButton.icon(
-            onPressed: () {}, icon: Icon(Icons.edit), label: Text("Uredi")),
-        SizedBox(width: 10),
         Flexible(
           child: Text(
-            // lesson.content,
-            "Privatna zabava provjeravanje svake osobe",
+            data['eventDescription'],
             style: TextStyle(fontSize: 18.0),
             overflow: TextOverflow.clip,
           ),
@@ -152,19 +204,39 @@ class _OrganizerEventDetailsPageState extends State<OrganizerEventDetailsPage> {
                   title: Text("Pregled pozvanih gosti"),
                   content: Container(
                     height: MediaQuery.of(context).size.height,
-                    width: 200,
-                    child: ListView.builder(
-                      itemCount: dataList.length,
-                      itemBuilder: (context, index) {
-                        // final item = yourItemList[index];
-                        return ListTile(
-                          title: Text("Ime i prezime gosta"),
-                          trailing: Icon(Icons.check),
-                          onTap: () {
-                            // Handle item selection
-                            // You can update the selected date or perform any other actions
-                          },
-                        );
+                    width: 10,
+                    child: FutureBuilder(
+                      future: eventInvitationFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          var invitedPeoples = snapshot.data!;
+                          if (invitedPeoples.length != 0) {
+                            return ListView.builder(
+                              itemCount: invitedPeoples.length,
+                              itemBuilder: (context, index) {
+                                final invitedPeople = invitedPeoples[index];
+                                return ListTile(
+                                  title: Row(
+                                    children: [
+                                      Text(invitedPeople.firstName!),
+                                      SizedBox(width: 3),
+                                      Text(invitedPeople.lastName!),
+                                    ],
+                                  ),
+                                  trailing: Icon(Icons.check),
+                                  onTap: () {
+                                    // Handle item selection
+                                    // You can update the selected date or perform any other actions
+                                  },
+                                );
+                              },
+                            );
+                          } else {
+                            return Text("Nema pozvanih");
+                          }
+                        } else {
+                          return Center(child: CircularProgressIndicator());
+                        }
                       },
                     ),
                   ),

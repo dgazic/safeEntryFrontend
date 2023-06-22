@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:safe_entry/screens/organizer_screens/organizer_registration_event_page.dart';
 
 class DatePickerExample extends StatefulWidget {
   const DatePickerExample({super.key});

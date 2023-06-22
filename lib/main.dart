@@ -9,6 +9,7 @@ import 'package:safe_entry/providers/user_provider.dart';
 import 'package:safe_entry/routes/routes_manager.dart';
 import 'package:safe_entry/services/API_Client.dart';
 import 'package:safe_entry/services/app_preferences.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -27,6 +28,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      localizationsDelegates: [
+        GlobalWidgetsLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [Locale('hr', 'HR')],
       title: 'Safe Entry',
       theme: ThemeData(
         primarySwatch: Colors.orange,
