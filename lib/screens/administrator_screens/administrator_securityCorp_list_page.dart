@@ -30,7 +30,7 @@ class _AdministratorSecurityCorpListPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Lista organizatora"),
+        title: Text("Lista zaštitarskih tvrtki"),
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
       ),
@@ -68,13 +68,13 @@ class _AdministratorSecurityCorpListPageState
                                                     (BuildContext context) {
                                                   return AlertDialog(
                                                     title: Text(
-                                                        "Opis organizatora"),
+                                                        "Opis zaštitarskih tvrtki"),
                                                     content: Container(
                                                       height: 200,
                                                       child: Column(
                                                         children: [
                                                           Text(
-                                                              "Ime organizatora: "),
+                                                              "Ime zaštitarske tvrtke: "),
                                                           SelectableText(
                                                             user.firstName!,
                                                             style: TextStyle(
@@ -84,7 +84,7 @@ class _AdministratorSecurityCorpListPageState
                                                           ),
                                                           SizedBox(height: 8.0),
                                                           Text(
-                                                              "Adresa organizatora: "),
+                                                              "Adresa zaštitarske tvrtke: "),
                                                           SelectableText(
                                                             user.address!,
                                                             style: TextStyle(
@@ -94,7 +94,7 @@ class _AdministratorSecurityCorpListPageState
                                                           ),
                                                           SizedBox(height: 8.0),
                                                           Text(
-                                                              "Email adresa organizatora: "),
+                                                              "Email adresa zašt. tvrtke: "),
                                                           SelectableText(
                                                             user.email!,
                                                             style: TextStyle(
@@ -104,7 +104,7 @@ class _AdministratorSecurityCorpListPageState
                                                           ),
                                                           SizedBox(height: 8.0),
                                                           Text(
-                                                              "Broj telefona organizatora: "),
+                                                              "Broj telefona zašt. tvrtke: "),
                                                           SelectableText(
                                                             user.phoneNumber!,
                                                             style: TextStyle(
@@ -142,7 +142,7 @@ class _AdministratorSecurityCorpListPageState
                                                       .showInformationMessage(
                                                           context,
                                                           0,
-                                                          "Račun organizatora deaktiviran");
+                                                          "Račun zaštitarske tvrtke deaktiviran");
                                                 },
                                                 icon: Icon(
                                                     Icons.disabled_by_default),
@@ -159,7 +159,7 @@ class _AdministratorSecurityCorpListPageState
                                                       .showInformationMessage(
                                                           context,
                                                           0,
-                                                          "Račun organizatora aktiviran");
+                                                          "Račun zaštitarske tvrtke aktiviran");
                                                 },
                                                 icon:
                                                     Icon(Icons.local_activity),
