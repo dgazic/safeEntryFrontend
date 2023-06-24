@@ -1,1 +1,1 @@
-const url = 'https://172.20.10.9:7017';
+const url = 'https://se3.azurewebsites.net';
